@@ -1,0 +1,29 @@
+{
+  "name": "tn-md-editor",
+  "version": "0.3.0",
+  "description": "vue markdown editor component",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/TooNote/MdEditor.git"
+  },
+  "keywords": [
+    "markdown",
+    "editor",
+    "vue"
+  ],
+  "author": "TooBug <i@toobug.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TooNote/MdEditor/issues"
+  },
+  "homepage": "https://github.com/TooNote/MdEditor#readme",
+  "dependencies": {
+    "brace": "^0.10.0",
+    "lodash": "^4.17.4",
+    "vuex": "^2.3.1"
+  }
+}
