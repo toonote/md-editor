@@ -47,9 +47,9 @@ let getExt = (filename) => {
 };
 
 export default {
-	props: ['imageUrl'],
+	props: ['tnEvent'],
 	computed:{
-		...mapGetters(['currentNote', 'layout', 'editAction'])
+		...mapGetters(['currentNote', 'editAction'])
 	},
 	methods:{
 		onDragOver(){
@@ -91,7 +91,6 @@ export default {
 
 			// 插入图片
 			if(hasImage && !isTable){
-				console.log('ready to emit');
 				this.$emit('save-image', '@clipboard');
 				// let imagePath = io.saveImageFromClipboard();
 				// this.insertImg(imagePath);
@@ -205,15 +204,6 @@ export default {
 				},0);
 			}
 		},
-		'layout.preview': function(){
-			this.resize();
-		},
-		'layout.sidebar': function(){
-			this.resize();
-		},
-		'layout.editor': function(){
-			this.resize();
-		},
 		'editAction': function(){
 			if(!this.editAction) return;
 			let undo = _aceEditor.getSession().getUndoManager();
@@ -227,10 +217,18 @@ export default {
 				}
 			}
 		},
-		imageUrl: function(url){
-			console.log('imageUrl', url);
-			this.insertImg(url);
-		}
+		tnEvent(data){
+			switch(data.type){
+				case 'imageUrl':
+					console.log('imageUrl', data.url);
+					this.insertImg(data.url);
+					break;
+				case 'layout':
+					console.log('layout');
+					this.resize();
+					break;
+			}
+		},
 	},
 	data(){
 		var data = {
