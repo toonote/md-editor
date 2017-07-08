@@ -263,7 +263,8 @@ export default {
 		// 同步滚动
 		session.on('changeScrollTop', throttle((scroll) => {
 			let targetRow = aceEditor.getFirstVisibleRow();
-			this.$store.dispatch('syncScroll', targetRow);
+			this.$emit('line-scroll', targetRow);
+			// this.$store.dispatch('syncScroll', targetRow);
 			// logger.ga('send', 'event', 'editor', 'scroll');
 		}, 500));
 		// if(timing && Date.now() - waitStart < 100) clearTimeout(timing);

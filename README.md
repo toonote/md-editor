@@ -21,6 +21,8 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
     - `ext` 文件后缀，如`.jpg`，可能为空
 - `content-change` 编辑器内容改变时触发，参数：
     - `content` 编辑器中的内容
+- `line-scroll` 滚动时触发，参数：
+    - `row` 当前编辑器可视区域第一行行号
 
 外界有事件需要内部响应时，可以修改`tnEvent`的值，`tnEvent`为一个对象
 
@@ -37,7 +39,6 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
 
 1. 文件未做预编译，需要使用者使用 `vue-loader`
 2. 目前依赖 vuex （未来会改掉）
-    - 滚动时会 dispatch `syncScroll`
     - 依赖 getter ：`currentNote`, `editAction`
 
 见如下示例代码：
