@@ -34,19 +34,22 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
 
 - `imageUrl` 图片存储完毕，需要插入到编辑器中显示，`data.url`为图片地址
 - `layout` 布局变更，需要 editor 重新适配大小
+- `editAction` 编辑命令，`data.action`取值`undo` / `redo`
 
 值得注意的点：
 
 1. 文件未做预编译，需要使用者使用 `vue-loader`
 2. 目前依赖 vuex （未来会改掉）
-    - 依赖 getter ：`currentNote`, `editAction`
+    - 依赖 getter ：`currentNote`
 
 见如下示例代码：
 
 ```html
 <template>
     <editor
+        v-on:content-change="contentChange"
         v-on:save-image="saveImage"
+        v-on:line-scroll="lineScroll"
         v-bind:tn-event="tnEvent"
     ></editor>
 </template>
@@ -81,6 +84,11 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
             contentChange: function(content){
                 // 处理编辑器的内容，此处示例为触发vuex action
                 this.$store.dispatch('changeCurrentNoteContent', content);
+            },
+            // 编辑器滚动
+            lineScroll: function(row){
+                // 滚动时做点什么事情，此处示例为触发vuex action
+                this.$store.dispatch('syncScroll', row);
             }
         },
         data:{

@@ -49,7 +49,7 @@ let getExt = (filename) => {
 export default {
 	props: ['tnEvent'],
 	computed:{
-		...mapGetters(['currentNote', 'editAction'])
+		...mapGetters(['currentNote'])
 	},
 	methods:{
 		onDragOver(){
@@ -205,28 +205,26 @@ export default {
 				},0);
 			}
 		},
-		'editAction': function(){
-			if(!this.editAction) return;
-			let undo = _aceEditor.getSession().getUndoManager();
-			if(this.editAction === 'undo') {
-				if(undo.hasUndo()){
-					undo.undo(true);
-				}
-			}else if(this.editAction === 'redo') {
-				if(undo.hasRedo()){
-					undo.redo(true);
-				}
-			}
-		},
 		tnEvent(data){
 			switch(data.type){
 				case 'imageUrl':
-					console.log('imageUrl', data.url);
 					this.insertImg(data.url);
 					break;
 				case 'layout':
-					console.log('layout');
 					this.resize();
+					break;
+				case 'editAction':
+					if(!data.action) return;
+					let undo = _aceEditor.getSession().getUndoManager();
+					if(data.action === 'undo') {
+						if(undo.hasUndo()){
+							undo.undo(true);
+						}
+					}else if(data.action === 'redo') {
+						if(undo.hasRedo()){
+							undo.redo(true);
+						}
+					}
 					break;
 			}
 		},
