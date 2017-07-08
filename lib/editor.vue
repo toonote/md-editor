@@ -174,7 +174,8 @@ export default {
 		onEditorInput(){
 			// logger.debug('onEditorInput');
 			_content = _aceEditor.getValue();
-			this.$store.dispatch('changeCurrentNoteContent', _content);
+			this.$emit('content-change', _content);
+			// this.$store.dispatch('changeCurrentNoteContent', _content);
 		},
 		resize(){
 			_aceEditor.resize();
