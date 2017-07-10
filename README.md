@@ -2,6 +2,8 @@
 
 基于 Vue 的编辑器，用于[小兔笔记](https://xiaotu.io)。
 
+> 当前版本尚在开发中，API随时可能变动，请勿在生产环境中使用
+
 ## 安装
 
 ```sh
@@ -11,6 +13,10 @@ npm install git+https://github.com/TooNote/MdEditor.git
 ## 使用
 
 封装为`.vue`单文件组件，直接引用使用。
+
+属性：
+
+- `content` 编辑器中显示的内容
 
 ### 通信
 
@@ -38,9 +44,7 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
 
 值得注意的点：
 
-1. 文件未做预编译，需要使用者使用 `vue-loader`
-2. 目前依赖 vuex （未来会改掉）
-    - 依赖 getter ：`currentNote`
+- 文件未做预编译，需要使用者使用 `vue-loader`
 
 见如下示例代码：
 
@@ -50,6 +54,7 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
         v-on:content-change="contentChange"
         v-on:save-image="saveImage"
         v-on:line-scroll="lineScroll"
+        v-bind:content="content"
         v-bind:tn-event="tnEvent"
     ></editor>
 </template>
@@ -93,7 +98,9 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
         },
         data:{
             // 编辑器会监听tnEvent，变动时响应事件
-            tnEvent: {}
+            tnEvent: {},
+            // 编辑器的内容，当content变化时，编辑器内容也会变化
+            content: ''
         },
         components: {
             editor

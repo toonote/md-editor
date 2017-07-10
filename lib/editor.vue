@@ -29,13 +29,10 @@ import {throttle} from 'lodash';
 import ace from 'brace';
 import 'brace/theme/tomorrow';
 import 'brace/mode/markdown';
-import {mapGetters} from 'vuex';
 import shortcut from './shortcut';
-// import io from '../modules/io';
-// import logger from '../modules/logger';
-// import util from '../modules/util';
+
 let _aceEditor;
-let _id,_content;
+let _id, _content;
 
 let getExt = (filename) => {
 	var ext = '';
@@ -47,10 +44,7 @@ let getExt = (filename) => {
 };
 
 export default {
-	props: ['tnEvent'],
-	computed:{
-		...mapGetters(['currentNote'])
-	},
+	props: ['tnEvent', 'content'],
 	methods:{
 		onDragOver(){
 			// console.log('dragover');
@@ -92,9 +86,6 @@ export default {
 			// 插入图片
 			if(hasImage && !isTable){
 				this.$emit('save-image', '@clipboard');
-				// let imagePath = io.saveImageFromClipboard();
-				// this.insertImg(imagePath);
-				// logger.ga('send', 'event', 'editor', 'insertImg', 'paste');
 			}else if(isTable){
 				this.insertTable(rows);
 			}
@@ -175,7 +166,6 @@ export default {
 			// logger.debug('onEditorInput');
 			_content = _aceEditor.getValue();
 			this.$emit('content-change', _content);
-			// this.$store.dispatch('changeCurrentNoteContent', _content);
 		},
 		resize(){
 			_aceEditor.resize();
@@ -186,22 +176,14 @@ export default {
 		}
 	},
 	watch:{
-		currentNote(note){
-			if(!note.id) return;
-			if(_id !== note.id){
-				_content = '';
-				_id = note.id;
-			}
-		},
-		'currentNote.content': function(content){
-			// console.log('watch currentNote.content change');
+		content(content){
+			console.log('watch content change');
 			if(!content && content !== '') return
 			if(_content !== content){
 				_aceEditor.setValue(content, -1);
 				// 清除undo列表
 				setTimeout(() => {
 					_aceEditor.getSession().getUndoManager().reset();
-					// console.log(_aceEditor.getSession().getUndoManager().hasUndo());
 				},0);
 			}
 		},
@@ -262,17 +244,7 @@ export default {
 		session.on('changeScrollTop', throttle((scroll) => {
 			let targetRow = aceEditor.getFirstVisibleRow();
 			this.$emit('line-scroll', targetRow);
-			// this.$store.dispatch('syncScroll', targetRow);
-			// logger.ga('send', 'event', 'editor', 'scroll');
 		}, 500));
-		// if(timing && Date.now() - waitStart < 100) clearTimeout(timing);
-		// timing = setTimeout(function(){
-			// console.log(targetRow,scrollMap[targetRow]);
-			/*animatedScroll($preview, scrollMap[targetRow], 500);
-			waitStart = Date.now();
-			timing = 0;*/
-			// },100);
-			// console.log('scroll',scroll);
 
 		// 重新计算大小
 		setTimeout(() => {
