@@ -21,9 +21,8 @@
     "url": "https://github.com/TooNote/MdEditor/issues"
   },
   "homepage": "https://github.com/TooNote/MdEditor#readme",
-  "dependencies": {
+  "peerDependencies": {
     "brace": "^0.10.0",
-    "lodash": "^4.17.4",
-    "vuex": "^2.3.1"
+    "lodash": "^4.17.4"
   }
 }

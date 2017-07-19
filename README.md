@@ -63,7 +63,7 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
     import editor from 'tn-md-editor';
     // 主app
     let app = new Vue({
-        // 需要vuex store
+        // 示例vuex store，不必须
         store,
         methods:{
             // 用于触发事件供editor响应
