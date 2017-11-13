@@ -4,22 +4,69 @@
 	font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 	height:100%;
 	flex:1;
+	display: flex;
+	flex-direction: column;
 }
 #ace_container{
-	height:100%;
+	/* height:100%; */
 	font-size: 14px;
     line-height: 28px;
+	flex:1;
+	/* display: flex; */
+}
+.find{
+	height: 0;
+	overflow: hidden;
+	line-height: 28px;
+	transition: height .4s;
+}
+.find.show{
+	height: 28px;
+}
+.find .findInputWrapper{
+	margin-right: 80px;
+}
+.find input{
+	background:#F6F6F6;
+	height: 27px;
+    width: 100%;
+    border: 0 none;
+    vertical-align: top;
+    padding: 0 10px;
+	box-sizing: border-box;
+	border-top:1px solid #e0e0e0;
+}
+.find input:focus{
+	background:white;
+	outline: 0 none;
+}
+.find button{
+	width: 80px;
+	float:right;
+	border:0 none;
+	height: 28px;
+	background: #333;
+	color:white;
+	font-size:14px;
 }
 </style>
 
 <template>
-<section class="editor">
+<section class="editor" v-on:keydown="onKeydown($event)">
 	<div
 		id="ace_container"
 		v-on:dragover.prevent="onDragOver"
 		v-on:drop.prevent.stop="onDrop"
 		v-on:paste="onPaste"
 	></div>
+	<div class="find" :class="{show:isSearching}">
+		<form @submit.prevent.stop="onSearch">
+			<button type="submit">查找</button>
+			<div class="findInputWrapper">
+				<input type="text" id="tn-editor-search-input" v-model="searchKeyword" />
+			</div>
+		</form>
+	</div>
 </section>
 </template>
 
@@ -167,6 +214,28 @@ export default {
 			_content = _aceEditor.getValue();
 			this.$emit('content-change', _content);
 		},
+		onKeydown($event){
+			// meta(cmd/ctrl) + F
+			if($event.keyCode === 70 && $event.metaKey){
+				$event.preventDefault();
+				$event.stopPropagation();
+				this.isSearching = true;
+				setTimeout(() => {
+					document.getElementById('tn-editor-search-input').focus();
+				}, 400);
+			}else if($event.keyCode === 27){
+				if(this.isSearching){
+					$event.preventDefault();
+					$event.stopPropagation();
+					this.isSearching = false;
+					_aceEditor.focus();
+					this.searchKeyword = '';
+				}
+			}
+		},
+		onSearch(){
+			_aceEditor.find(this.searchKeyword);
+		},
 		resize(){
 			_aceEditor.resize();
 			// 动画完之后再resize一次
@@ -196,6 +265,7 @@ export default {
 					this.resize();
 					break;
 				case 'editAction':
+					console.log('editAction', data);
 					if(!data.action) return;
 					let undo = _aceEditor.getSession().getUndoManager();
 					if(data.action === 'undo') {
@@ -213,7 +283,8 @@ export default {
 	},
 	data(){
 		var data = {
-			// content:''
+			isSearching: false,
+			searchKeyword: ''
 		};
 		return data;
 	},
