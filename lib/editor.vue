@@ -97,10 +97,10 @@ export default {
 			// console.log('dragover');
 		},
 		onDrop(e){
-			let img = e.dataTransfer.files[0];
-			if(!img || !/^image/.test(img.type)) return;
-			let ext = getExt(img.name);
-			this.$emit('save-image', img.path, ext);
+			let attachment = e.dataTransfer.files[0];
+			if(!attachment/*  || !/^image/.test(attachment.type) */) return;
+			let ext = getExt(attachment.name);
+			this.$emit('save-attachment', attachment.path, ext);
 			// let imagePath = io.saveImage(img.path, ext);
 			// this.insertImg(imagePath);
 			// logger.ga('send', 'event', 'editor', 'insertImg', 'drag');
@@ -132,15 +132,16 @@ export default {
 
 			// 插入图片
 			if(hasImage && !isTable){
-				this.$emit('save-image', '@clipboard');
+				this.$emit('save-attachment', '@clipboard');
 			}else if(isTable){
 				this.insertTable(rows);
 			}
 
 		},
-		insertImg(imagePath){
-
-			if(imagePath){
+		insertAttachment(data){
+			let url = data.url;
+			_aceEditor.insert(`\n\n![${data.filename}](${url})\n\n`);
+			/* if(imagePath){
 				imagePath = encodeURI(imagePath);
 				if(process.platform === 'win32'){
 					// 把\替换回来
@@ -149,7 +150,7 @@ export default {
 				_aceEditor.insert(`\n\n![${name}](${imagePath})\n\n`);
 			}else{
 				_aceEditor.insert(`插入图片出错！`);
-			}
+			} */
 			this.onEditorInput();
 		},
 		insertTable(rows){
@@ -212,7 +213,15 @@ export default {
 		onEditorInput(){
 			// logger.debug('onEditorInput');
 			_content = _aceEditor.getValue();
-			this.$emit('content-change', _content);
+			let cursorPosition = _aceEditor.getCursorPosition();
+			let isEditingHeading = false;
+			if(cursorPosition.row === 0){
+				isEditingHeading = true;
+			}
+			this.$emit('content-change', {
+				content: _content,
+				isEditingHeading
+			});
 		},
 		onKeydown($event){
 			// meta(cmd/ctrl) + F
@@ -258,8 +267,8 @@ export default {
 		},
 		tnEvent(data){
 			switch(data.type){
-				case 'imageUrl':
-					this.insertImg(data.url);
+				case 'newAttachment':
+					this.insertAttachment(data);
 					break;
 				case 'layout':
 					this.resize();

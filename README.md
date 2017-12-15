@@ -22,7 +22,7 @@ npm install git+https://github.com/TooNote/MdEditor.git
 
 editor 会通过事件与外界通信，当内部有事件产生时，需要外部监听处理，目前会触发的事件：
 
-- `save-image` 当粘贴或者拖拽图片时会触发，参数：
+- `save-attachment` 当粘贴或者拖拽附件时会触发，参数：
     - `filepath` 本地文件的路径，或者`@clipboard`表示剪贴板
     - `ext` 文件后缀，如`.jpg`，可能为空
 - `content-change` 编辑器内容改变时触发，参数：
@@ -38,7 +38,7 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
 
 目前editor会响应如下类型事件：
 
-- `imageUrl` 图片存储完毕，需要插入到编辑器中显示，`data.url`为图片地址
+- `newAttachment` 图片存储完毕，需要插入到编辑器中显示，`data.url`为附件地址
 - `layout` 布局变更，需要 editor 重新适配大小
 - `editAction` 编辑命令，`data.action`取值`undo` / `redo`
 
@@ -52,7 +52,7 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
 <template>
     <editor
         v-on:content-change="contentChange"
-        v-on:save-image="saveImage"
+        v-on:save-attachment="saveAttachment"
         v-on:line-scroll="lineScroll"
         v-bind:content="content"
         v-bind:tn-event="tnEvent"
@@ -79,10 +79,10 @@ editor 会通过事件与外界通信，当内部有事件产生时，需要外�
             saveImage: function(filepath, ext){
                 if(filepath === '@clipboard'){
                     // 需要自己写方法存储图片并返回url
-                    this._tnEvent('imageUrl', {url:io.saveImageFromClipboard()});
+                    this._tnEvent('newAttachment', {url:io.saveImageFromClipboard()});
                 }else{
                     // 需要自己写方法存储图片并返回url
-                    this._tnEvent('imageUrl', {url:io.saveImage(filepath, ext)});
+                    this._tnEvent('newAttachment', {url:io.saveImage(filepath, ext)});
                 }
             },
             // 编辑器内容改变
