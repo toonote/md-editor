@@ -21,7 +21,7 @@
     "url": "https://github.com/TooNote/MdEditor/issues"
   },
   "homepage": "https://github.com/TooNote/MdEditor#readme",
-  "peerDependencies": {
+  "dependencies": {
     "brace": "^0.10.0",
     "lodash": "^4.17.4"
   }

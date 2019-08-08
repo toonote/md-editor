@@ -1,56 +1,3 @@
-<style scoped>
-.editor{
-	border-right:1px solid #E0E0E0;
-	font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
-	height:100%;
-	flex:1;
-	display: flex;
-	flex-direction: column;
-}
-#ace_container{
-	/* height:100%; */
-	font-size: 14px;
-    line-height: 28px;
-	flex:1;
-	/* display: flex; */
-}
-.find{
-	height: 0;
-	overflow: hidden;
-	line-height: 28px;
-	transition: height .4s;
-}
-.find.show{
-	height: 28px;
-}
-.find .findInputWrapper{
-	margin-right: 80px;
-}
-.find input{
-	background:#F6F6F6;
-	height: 27px;
-    width: 100%;
-    border: 0 none;
-    vertical-align: top;
-    padding: 0 10px;
-	box-sizing: border-box;
-	border-top:1px solid #e0e0e0;
-}
-.find input:focus{
-	background:white;
-	outline: 0 none;
-}
-.find button{
-	width: 80px;
-	float:right;
-	border:0 none;
-	height: 28px;
-	background: #333;
-	color:white;
-	font-size:14px;
-}
-</style>
-
 <template>
 <section class="editor" v-on:keydown="onKeydown($event)">
 	<div
@@ -63,7 +10,7 @@
 		<form @submit.prevent.stop="onSearch">
 			<button type="submit">查找</button>
 			<div class="findInputWrapper">
-				<input type="text" id="tn-editor-search-input" v-model="searchKeyword" />
+				<input type="text" ref="findInput" v-model="searchKeyword" />
 			</div>
 		</form>
 	</div>
@@ -79,7 +26,7 @@ import 'brace/mode/markdown';
 import shortcut from './shortcut';
 
 let _aceEditor;
-let _id, _content;
+let _id, _value;
 
 let getExt = (filename) => {
 	var ext = '';
@@ -91,7 +38,7 @@ let getExt = (filename) => {
 };
 
 export default {
-	props: ['tnEvent', 'content'],
+	props: ['value'],
 	methods:{
 		onDragOver(){
 			// console.log('dragover');
@@ -212,16 +159,14 @@ export default {
 		},
 		onEditorInput(){
 			// logger.debug('onEditorInput');
-			_content = _aceEditor.getValue();
+			_value = _aceEditor.getValue();
 			let cursorPosition = _aceEditor.getCursorPosition();
 			let isEditingHeading = false;
 			if(cursorPosition.row === 0){
 				isEditingHeading = true;
 			}
-			this.$emit('content-change', {
-				content: _content,
-				isEditingHeading
-			});
+			// todo:isEditingHeading如何处理
+			this.$emit('input', _value);
 		},
 		onKeydown($event){
 			// meta(cmd/ctrl) + F
@@ -230,7 +175,7 @@ export default {
 				$event.stopPropagation();
 				this.isSearching = true;
 				setTimeout(() => {
-					document.getElementById('tn-editor-search-input').focus();
+					this.$refs.findInput.focus();
 				}, 400);
 			}else if($event.keyCode === 27){
 				if(this.isSearching){
@@ -254,18 +199,18 @@ export default {
 		}
 	},
 	watch:{
-		content(content){
-			console.log('watch content change');
-			if(!content && content !== '') return
-			if(_content !== content){
-				_aceEditor.setValue(content, -1);
+		value(value){
+			console.log('watch value change');
+			if(!value && value !== '') return
+			if(_value !== value){
+				_aceEditor.setValue(value, -1);
 				// 清除undo列表
 				setTimeout(() => {
 					_aceEditor.getSession().getUndoManager().reset();
 				},0);
 			}
 		},
-		tnEvent(data){
+		/* tnEvent(data){
 			switch(data.type){
 				case 'newAttachment':
 					this.insertAttachment(data);
@@ -288,14 +233,13 @@ export default {
 					}
 					break;
 			}
-		},
+		}, */
 	},
 	data(){
-		var data = {
+		return {
 			isSearching: false,
 			searchKeyword: ''
 		};
-		return data;
 	},
 	mounted(){
 		var aceEditor = ace.edit('ace_container');
@@ -333,7 +277,67 @@ export default {
 
 		window.addEventListener('resize', throttle(this.resize, 50));
 
-
+		/* console.log(this.value, this);
+		if(this.value){
+			_aceEditor.setValue(this.value, -1);
+		} */
+	},
+	destroyed(){
+		_value = '';
+		_aceEditor.destroy();
 	}
 };
 </script>
+<style scoped>
+.editor{
+	border-right:1px solid #E0E0E0;
+	font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+	height:100%;
+	flex:1;
+	align-items: stretch;
+	display: flex;
+	flex-direction: column;
+}
+#ace_container{
+	/* height:100%; */
+	font-size: 14px;
+    line-height: 28px;
+	flex:1;
+	/* display: flex; */
+}
+.find{
+	height: 0;
+	overflow: hidden;
+	line-height: 28px;
+	transition: height .4s;
+}
+.find.show{
+	height: 28px;
+}
+.find .findInputWrapper{
+	margin-right: 80px;
+}
+.find input{
+	background:#F6F6F6;
+	height: 27px;
+    width: 100%;
+    border: 0 none;
+    vertical-align: top;
+    padding: 0 10px;
+	box-sizing: border-box;
+	border-top:1px solid #e0e0e0;
+}
+.find input:focus{
+	background:white;
+	outline: 0 none;
+}
+.find button{
+	width: 80px;
+	float:right;
+	border:0 none;
+	height: 28px;
+	background: #333;
+	color:white;
+	font-size:14px;
+}
+</style>
