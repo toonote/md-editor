@@ -44,16 +44,17 @@ export default {
 			// console.log('dragover');
 		},
 		onDrop(e){
-			let attachment = e.dataTransfer.files[0];
-			if(!attachment/*  || !/^image/.test(attachment.type) */) return;
-			let ext = getExt(attachment.name);
-			this.$emit('save-attachment', attachment.path, ext);
-			// let imagePath = io.saveImage(img.path, ext);
-			// this.insertImg(imagePath);
-			// logger.ga('send', 'event', 'editor', 'insertImg', 'drag');
+			let attachments = e.dataTransfer.files;
+			if(!attachments || !attachments.length) return;
+			// let ext = getExt(attachment.name);
+			this.$emit('attachment', {
+				method: 'drop',
+				files: attachments,
+			});
 		},
 		onPaste(e){
 			if(!e.clipboardData.items || !e.clipboardData.items.length) return;
+            console.log('TCL: onPaste -> e.clipboardData.items', e.clipboardData.items);
 			// 判断是否有图片
 			let hasImage = false;
 			for(let i = e.clipboardData.items.length;i--;){
@@ -79,7 +80,10 @@ export default {
 
 			// 插入图片
 			if(hasImage && !isTable){
-				this.$emit('save-attachment', '@clipboard');
+				this.$emit('attachment', {
+					method: 'clipboard',
+					files: Array.prototype.map.call(e.clipboardData.items, (item) => item.getAsFile()),
+				});
 			}else if(isTable){
 				this.insertTable(rows);
 			}
@@ -87,6 +91,7 @@ export default {
 		},
 		insertAttachment(data){
 			let url = data.url;
+			// todo:判断前后是否空行
 			_aceEditor.insert(`\n\n![${data.filename}](${url})\n\n`);
 			/* if(imagePath){
 				imagePath = encodeURI(imagePath);
@@ -210,6 +215,7 @@ export default {
 				},0);
 			}
 		},
+		// todo:提出来做成方法
 		/* tnEvent(data){
 			switch(data.type){
 				case 'newAttachment':
