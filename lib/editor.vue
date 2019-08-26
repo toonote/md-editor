@@ -283,10 +283,9 @@ export default {
 
 		window.addEventListener('resize', throttle(this.resize, 50));
 
-		/* console.log(this.value, this);
 		if(this.value){
 			_aceEditor.setValue(this.value, -1);
-		} */
+		}
 	},
 	destroyed(){
 		_value = '';
