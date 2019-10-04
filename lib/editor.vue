@@ -19,7 +19,7 @@
 
 
 <script>
-import {throttle} from 'lodash';
+import throttle from 'lodash/throttle';
 import ace from 'brace';
 import 'brace/theme/tomorrow';
 import 'brace/mode/markdown';
