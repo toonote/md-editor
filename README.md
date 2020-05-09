@@ -66,6 +66,7 @@ npm install @toonote/md-editor
 通过`$refs`机制拿到组件实例后，可调用实例方法：
 
 - `insertAttachment({filename:string, url:string})` 在编辑器光标位置插入附件（图片）
+- `insertLink({title:string, url:string})` 在编辑器光标位置插入链接
 - `layout` 布局变更，需要 editor 重新适配大小
 - `editAction({action:string})` 编辑命令，`action`取值`undo` / `redo`
 
@@ -85,6 +86,10 @@ npm install @toonote/md-editor
 - [小兔笔记](https://xiaoto.io)
 
 ## 历史记录
+
+### 1.0.0 alpha 2 (2020-05-09)
+
+- 添加插入链接方法`insertLink()`
 
 ### 1.0.0 alpha 1 (2019-08-20)
 
