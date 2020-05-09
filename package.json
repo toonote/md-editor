@@ -1,6 +1,6 @@
 {
   "name": "@toonote/md-editor",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "vue markdown editor component",
   "main": "index.js",
   "scripts": {

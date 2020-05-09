@@ -87,9 +87,13 @@ npm install @toonote/md-editor
 
 ## 历史记录
 
-### 1.0.0 alpha 2 (2020-05-09)
+### 1.0.0 alpha 3 (2020-05-09)
 
 - 添加插入链接方法`insertLink()`
+
+### 1.0.0 alpha 2 (2020-02-15)
+
+- 更新barce版本，解决safari下中文输入问题
 
 ### 1.0.0 alpha 1 (2019-08-20)
 
