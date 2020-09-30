@@ -82,7 +82,9 @@ export default {
 			if(hasImage && !isTable){
 				this.$emit('attachment', {
 					method: 'clipboard',
-					files: Array.prototype.map.call(e.clipboardData.items, (item) => item.getAsFile()),
+					files: Array.filter.call(e.clipboardData.items, (item) => {
+						return /image/.test(item.type);
+					}).map((item) => item.getAsFile()),
 				});
 			}else if(isTable){
 				this.insertTable(rows);
