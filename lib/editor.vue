@@ -53,6 +53,8 @@ export default {
 			});
 		},
 		onPaste(e){
+            // console.log('onPaste');
+            // this.insertWithNewLine(`![test](test)`, 2, 2);return;
 			if(!e.clipboardData.items || !e.clipboardData.items.length) return;
             console.log('TCL: onPaste -> e.clipboardData.items', e.clipboardData.items);
 			// 判断是否有图片
@@ -82,7 +84,7 @@ export default {
 			if(hasImage && !isTable){
 				this.$emit('attachment', {
 					method: 'clipboard',
-					files: Array.filter.call(e.clipboardData.items, (item) => {
+					files: Array.prototype.filter.call(e.clipboardData.items, (item) => {
 						return /image/.test(item.type);
 					}).map((item) => item.getAsFile()),
 				});
@@ -92,13 +94,13 @@ export default {
 
 		},
 		insertAttachment(data){
-			// todo:判断前后是否空行
-			_aceEditor.insert(`\n\n![${data.filename}](${data.url})\n\n`);
+            this.insertWithNewLine(`![${data.filename}](${data.url})`, 2, 2);
+			// _aceEditor.insert(`\n\n![${data.filename}](${data.url})\n\n`);
 			this.onEditorInput();
 		},
 		insertLink(data){
-			// todo:判断前后是否空行
-			_aceEditor.insert(`\n\n[${data.title}](${data.url})\n\n`);
+            this.insertWithNewLine(`[${data.title}](${data.url})`, 2, 2);
+			// _aceEditor.insert(`\n\n[${data.title}](${data.url})\n\n`);
 			this.onEditorInput();
 		},
 		insertTable(rows){
@@ -157,7 +159,51 @@ export default {
 				_aceEditor.insert(`${ret}`);
 			});
 
-		},
+        },
+        /**
+         * 在编辑器中插入内容，并保证前后有空行
+         * 如果原来就有空行，则不新插入，否则新插入空行
+         */
+        insertWithNewLine(content, linesBefore=0, linesAfter=0){
+            const cursorPosition = _aceEditor.getCursorPosition();
+            const currLineContent = _aceEditor.session.getLine(cursorPosition.row);
+            // console.log(cursorPosition, currLineContent);
+            const beforeText = currLineContent.substr(0, cursorPosition.column);
+            const afterText = currLineContent.substr(cursorPosition.column);
+            // console.log(beforeText, afterText);
+
+            const repeat = (str, count) => {
+                let ret = '';
+                for(let i = 0; i < count; i++) {
+                    ret += str;
+                }
+                return ret;
+            };
+
+            if(beforeText){
+                content = '\n\n' + content;
+            }else if(cursorPosition.row > linesBefore){
+                const paddingLines = linesBefore;
+                for(let i=0; i<linesBefore; i++){
+                    if(_aceEditor.session.getLine(cursorPosition.row - i)){
+                        content = repeat('\n', linesBefore - i) + content;
+                        break;
+                    }
+                }
+            }
+            if(afterText){
+                content = content + '\n\n';
+            }else{
+                const paddingLines = linesAfter;
+                for(let i=0; i<linesAfter; i++){
+                    if(_aceEditor.session.getLine(cursorPosition.row + i)){
+                        content = content + repeat('\n', linesBefore - i);
+                        break;
+                    }
+                }
+            }
+            _aceEditor.insert(content);
+        },
 		onEditorInput(){
 			// logger.debug('onEditorInput');
 			_value = _aceEditor.getValue();
@@ -281,7 +327,7 @@ export default {
 
 		if(this.value){
 			_aceEditor.setValue(this.value, -1);
-		}
+        }
 	},
 	destroyed(){
 		_value = '';
